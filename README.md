@@ -2,11 +2,9 @@
 
 This document explains the aTech Web Style Protocol (AWSP). This is a protocol which outlines how a web document should be styled using SCSS & HTML. 
 
-AWSP specifies that no styling information should be present in an HTML document. This means that no HTML element should not have class names which relate to their appearance (for example, 'green', 'large' or 'rightAligned'). In order to layout a document to comply with AWSP, you will need to define a number of CSS documents (known as Views) which can position & style your HTML elements.
-
 The core philosophy is as follows:
 
-* A web document is split into three main concerns: content (HTML), style (CSS) and behaviour (Javascript). There is no place for styles in the content layer. The use of style attributes or classes which make reference to appearance is not permitted.
+* A web document is split into three main concerns: content (HTML), style (CSS) and behaviour (Javascript). There is no place for styles in the content layer. The use of style attributes or classes which make reference to appearance is not permitted (therefore classes named 'greenButton', 'rightAligned' or 'largeText' are not allowed).
 
 * Every part of a web document has a direct relationship to a single controlling CSS selector.
 
