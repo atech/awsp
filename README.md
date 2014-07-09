@@ -4,9 +4,25 @@ This document explains the aTech Web Style Protocol (AWSP). This is a protocol w
 
 AWSP specifies that no styling information should be present in an HTML document. This means that no HTML element should not have class names which relate to their appearance (for example, 'green', 'large' or 'rightAligned'). In order to layout a document to comply with AWSP, you will need to define a number of CSS documents (known as Views) which can position & style your HTML elements.
 
+The core philosophy is as follows:
+
+* A web document is split into three main concerns: content (HTML), style (CSS) and behaviour (Javascript). There is no place for styles in the content layer. The use of style attributes or classes which make reference to appearance is not permitted.
+
+* Every part of a web document has a direct relationship to a single controlling CSS selector.
+
+* Modular design components are recommended but not required for every element. In some cases, a small design decision may be implemented without constructing a whole modular component to style it.
+
+* While thought should be given to how an element will be used in the future, prematurely optimising classes to support currently un-required functionality is discouraged.
+
+* Deciding where to place additional styles for existing elements (or new elements) should be well defined.
+
 ## The structure of an AWSP web document
 
-An AWSP web document will implement **views** and **components**. 
+An AWSP web document will implement a number of objects in the CSS layer.
+
+* **Pages** - whole HTML documents
+* **Views** - semantic sections of HTML documents
+* **Components** - design elements which can be re-used (for example: buttons, forms, tables etc...)
 
 ### What is a page?
 
@@ -75,7 +91,7 @@ In the example above, the buttons in the top right utilise components in AWSP. L
 </nav>
 ```
 
-You will see that we have created a `nav` element with the name `comButtonBar` which contains an unordered list with two links with the class `comButton`. This particular example uses two different components. The `comButtonBar` component allows two `comButton` components to be placed into an unordered list and then be displayed next to each other with rounded corners on the left side of the first button and on the right side of the last button.
+You will see that we have created a `nav` element with the name `comButtonBar` which contains an unordered list with two links with the class `comButton`. This particular example uses two different components. The `comButtonBar` component allows two `comButton` components to be placed into an unordered list and then be displayed next to each other with rounded corners on the left side of the first button and on the right side of the last button. The `comButton` component sets the style of a button - in this case, it's just sets a link to have green background.
 
 Here's the CSS for these component:
 
@@ -96,8 +112,7 @@ Here's the CSS for these component:
 }
 ```
 
-One thing you will notice is that this component does not specify any elements which define its position or margin within the view. The position of a component is the responsibility of the view which contains it. Back in our view file, we can simply
-position it on the right using the class we assigned to it. In here, we can also set the colour for our login button so that it is grey rather than green (which was the default we set when we originally defined it).
+One thing you will notice is that this component does not specify any elements which define its position or margin within the view. The position of a component is the responsibility of the view which contains it. Back in our view file, we can simply position it on the right using the class we assigned to it. In here, we can also set the colour for our login button so that it is grey rather than green (which was the default we set when we originally defined it).
 
 ```scss
 .viewSiteHeader {
