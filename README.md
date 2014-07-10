@@ -6,13 +6,13 @@ The core philosophy is as follows:
 
 * A web document is split into three main concerns: content (HTML), style (CSS) and behaviour (Javascript). There is no place for styles in the content layer. The use of style attributes or classes which make reference to appearance is not permitted (therefore classes named 'greenButton', 'rightAligned' or 'largeText' are not allowed).
 
-* Every part of a web document has a direct relationship to a single controlling CSS selector.
-
 * Modular design components are recommended but not required for every element. In some cases, a small design decision may be implemented without constructing a whole modular component to style it.
 
 * While thought should be given to how an element will be used in the future, prematurely optimising classes to support currently un-required functionality is discouraged.
 
 * Deciding where to place additional styles for existing elements (or new elements) should be well defined.
+
+* Long and clumsy class names are not desired in our markup.
 
 ## The structure of an AWSP web document
 
@@ -28,101 +28,167 @@ A page a whole HTML document. The contents between `<html>` and `</html>` make u
 
 ### What is a view?
 
-A view is a section of a page. A view is responsible for positioning & styling all the elements which are contained inside it. A view can be any block-level HTML element (usually a `header`, `footer`, `section` or `div`). The element must have a class which is prefixed with `view` and contains a unique name for the view in camel case. For example, `viewSiteHeader` or `viewFeatureMatrix`.
+A view is a section of a page. A view is responsible for positioning & styling the elements which are contained inside it. A view can be any block-level HTML element (usually a `header`, `footer`, `section` or `div`). The element must have a class which is prefixed with `view` and contains a unique name for the view in camel case. For example, `viewSiteHeader` or `viewFeatureMatrix`.
 
 ![Screenshot of Views](http://s.adamcooke.io/14/epB07.png)
 
-In the screenshot above, you can see an example page with each view identified by a blue box. Using the first view as an example, you can see this contains a logo, a set of primary navigation and a couple of buttons (on the right). The markup for such a view may look like this:
+In the screenshot above, you can see how a page is made up of a number views. To keep things simple, we're now going to look at creating an example view used for displaying a blog. You'll see below that the view contains two areas which will have content - a main content area on the left and a sidebar on the right.
+
+![Screenshot of a blog](http://s.adamcooke.io/14/dDZ3L.png)
 
 ```html
-<header class='viewSiteHeader'>
-  <h1 class='logo'><a href='/'>Sirportly</a></h1>
-  <nav class='mainNavigation'>
-    <ul>
-      <li><a href='/features'>Features</a></li>
-      <li><a href='/pricing'>Pricing</a></li>
-      <li><a href='/customers'>Customers</a></li>
-      <li><a href='/blog'>Blog</a></li>
-      <li><a href='/resources'>Resources &amp; Support</a></li>
-    </ul>
-  </nav>
-</header>
+<section class='viewBlog'>
+  
+  <div class='viewBlog__content'>
+    <!--- Content goes here -->
+  </div>
+  
+  <div class='viewBlog__sidebar'>
+    <!--- Sidebar goes in here -->
+  </div>
+  
+</section>
 ```
 
-The styles for this view would be defined as follows in a SCSS document.
+The stylesheet for this view is responsible for positioning these elements on the page. Here's an example stylesheet for our `Blog` view.
 
 ```scss
-.viewSiteHeader {
-  
-  .logo {
-    // Styles for the logo
-  }
-  
-  .mainNavigation {
-    ul {
-      li {
-        float: left;
-        // Other styles for each navigation item.
-      }
-    }
-  }
-  
+.viewBlog {
+  background: white;
+}
+
+.viewBlog__content {
+  float: left;
+  width: 60%;
+}
+
+.viewBlog__sidebar {
+  float: right;
+  width: 40%;
 }
 ```
 
 You will notice that we don't use specify the HTML element name when selecting our elements. We simply use the class selector. This allows the markup to use whatever element is appropriate for the website without worrying about the styles which should be applied. This allows for a fully semantic HTML document to be created.
 
-Also notice that the elements within the view do not include any prefix. Elements which are directly within a view do not need to be prefixed with anything. It is assumed that these names will be unique to the view in question.
+You will notice that our child elements (content & sidebar) are prefixed with the name of the view joined with a double underscore. All elements which the view is taking responsibility for must be prefixed with the name of the view. The actual definition should be defined at the root within the same file as the view itself.
 
 ### What is a component?
 
-A component is an area of a page which has a defined purpose & style and may need to be re-used somewhere else within the page. A component can be any HTML element. The element must have a class which is prefixed with `com` and contains a unique name for the component in camel case. For example, `comButton` or `comTabBar`.
+A component is a part of your page which has its own styles (colours, sizes, etc...). A component can be any HTML element and may have any number of child elements. The element must have a class which is prefixed with `com` and contains a unique name for the component in camel case. For example, `comButton` or `comTabBar`.
 
-In the example above, the buttons in the top right utilise components in AWSP. Let's look at the markup for the components. This wasn't included in the markup above but it would be inserted above the main navigation element.
+There are two types of component - a block component or an inline component. A block component will contain a number of child objects whereas an inline component will simply modify the styles of an existing element.
+
+Here are some examples of components which you might create in your web document along with their types.
+
+* **Buttons** - inline - a component style for every button (see: http://s.adamcooke.io/14/v603j.png)
+* **Form Elements** - inline - styles for text input fields, fieldsets etc...
+
+* **Lists** - block - a style which formats an un-ordered list (see: http://s.adamcooke.io/14/2h3mb.png)
+* **Tables** - block - styles for tables containing data (see: http://s.adamcooke.io/14/eiEHD.png)
+* **A testimonial** - block - the styles needed to display a testimonial from a customer (see: http://s.adamcooke.io/14/J5pY8.png)
+* **Boxes** - block - a box to display a newsletter signup (see: http://s.adamcooke.io/14/Jx46b.png)
+* **A blog post** - block - the styles needed to style a complete blog post (see: http://s.adamcooke.io/14/HlNOZ.png)
+* **Navigation bars** - block - styles needed to position links into a navigation bar (see: http://s.adamcooke.io/14/Umll1.png)
+* **Page titles** - block - styles needed to display page titles (see: http://s.adamcooke.io/14/zDsXk.png)
+
+The actual blog shown above uses 4 block components - one for the blog post, one for the newsletter signup, one for the signup call to action and one for the list of recent posts. In this example, we'll just define a component for the green newsletter signup box. Here's the HTML which would be inserted into the `viewBlog__sidebar` view.
 
 ```html
-<nav class='comButtonBar metaLinks'>
-  <ul>
-    <li><a href='/signup' class='signup comButton'>30 day free trial</a></li>
-    <li><a href='/login' class='login comButton'>Login</a></li>
-  </ul>
-</nav>
+<div class='comNewsletterSignup'>
+  <p class='title'>Receive the latest news and tips & tricks from us directly to your inbox.</p>
+  <form action='/subscribe' method='post'>
+    <p class='inputFields'>
+      <input type='text' name='email' placeholder='Enter your email' class='emailField'>
+      <input type='submit' name='submit' value='Go' class='submitButton'>
+    </p>
+  </form>
+</div>
 ```
 
-You will see that we have created a `nav` element with the name `comButtonBar` which contains an unordered list with two links with the class `comButton`. This particular example uses two different components. The `comButtonBar` component allows two `comButton` components to be placed into an unordered list and then be displayed next to each other with rounded corners on the left side of the first button and on the right side of the last button. The `comButton` component sets the style of a button - in this case, it's just sets a link to have green background.
-
-Here's the CSS for these component:
+The SCSS for this component would be as follows (although much of the actual styling has been omitted to ensure clarity).
 
 ```scss
-.comButtonBar {
-  > ul {
-    li {
-      float:left;
-      // plus styles to add border radius to first/last items
-    }
-  }
-}
-
-.comButton {
+.comNewsletterSignup {
   background: green;
-  color: white;
-  padding: 5px 15px;
+
+  .title {
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .emailField {
+    width: 60%;
+    float: left
+  }
+  
+  .submitButton {
+    width: 60%;
+    float: left;
+  }
+  
 }
 ```
 
-One thing you will notice is that this component does not specify any elements which define its position or margin within the view. The position of a component is the responsibility of the view which contains it. Back in our view file, we can simply position it on the right using the class we assigned to it. In here, we can also set the colour for our login button so that it is grey rather than green (which was the default we set when we originally defined it).
+One thing you will notice is that this component does not specify any elements which define its own position or margin. The position of a component is the responsibility of the view which contains it.
+
+You will notice that we have not used any prefixes on the component's child elements. Block components should never be nested within another block component and therefore we can assume that the class namespace is clean and we can use it as needed.
+
+#### Inline components
+
+An inline component is likely a button or an input box. Using a button as an example, we'll demonstrate how you can add a button to a view.
+
+```html
+<div class='viewSignupHero'>
+  <h2 class='heading'>Sign up today!</h2>
+  <p><a href='/signup' class='comButton'>Click here to sign up for a free 30 day trial</a></p>
+</div>
+```
+
+You'll see we've added a `comButton` class to our link. This now says that this link must look like a button component. The SCSS for this looks like this and simply styles the `comButton`.
 
 ```scss
-.viewSiteHeader {
-  .metaLinks {
-    float: right;
-    
-    .login {
-      background-color: grey;
-    }
+.comButton {
+  background: black;
+  color: white;
+  padding: 6px 16px;
+}
+```
+
+#### Modifying components
+
+In some cases, a component may have different variations which can be used within your document. For example, you may have different coloured buttons for different use cases. In this example, we'll create styles for two buttons.
+
+```scss
+.comButton-green {
+  background-color: green;
+}
+
+.comButton-red {
+  background-color: red;
+}
+```
+
+We have created two new root level objects prefixed with the full name of the component followed by a hyphen and then the name of our modifier. These should be in the same file as your `comButton` definition. How do you apply these to objects which are on the page I hear you ask. You _could_ just add the `comButton-green` class to your markup but this would break our "no style information in the content layer" rule, therefore we will set the class using our view. Image this HTML:
+
+```html
+<section class='viewSignupHero'>
+  <h3 class='heading'>Get started with our amazing help desk software!</h3>
+  <p><a href='signup' class='comButton signupButton'>Signup today for our free trial!</a></p>
+</section>
+```
+
+By default, our signup today button will have a black background as that's what we set when we defined our base `comButton`. However, in order to make it use the green modifier we can override it in our view.
+
+```scss
+.viewSignupHero {
+  .signupButton {
+    @extend .comButton-green;
   }
 }
 ```
+
+This uses the SCSS extend functionality which will now automatically link this element with the `comButton-green` modifier we created. If we ever make changes to our modifier, any element which uses it will be updated automatically.
+
 
 ## Guidelines for directory structure
 
